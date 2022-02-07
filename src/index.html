@@ -8,10 +8,19 @@
     <h1>Get Weather Conditions From Anywhere!</h1>
     <label for="location">Enter a location:</label>
     <input id="location" type="text">
+    <input type="radio" id="kelvins" name="temp" value="standard" checked>
+    <label for="kelvins">Kelvins</label>
+    <input type="radio" id="fahrenheit" name="temp" value="imperial">
+    <label for="fahrenheit">Fahrenheit</label> 
     <button class="btn-success" id="weatherLocation">Get Current Temperature and Humidity</button>
     <div class="showErrors"></div>
     <div class="showHumidity"></div>
+    <div class="showClouds"></div>
     <div class="showTemp"></div>
+    <div class="showF"></div>
+    <div class="showWeather"></div>
+    <div id="showWind"></div>
+    <div id="showSpeed"></div>
     <h1>joke</h1>
     
     <button class="btn-success" id="joke">Get joke</button>
