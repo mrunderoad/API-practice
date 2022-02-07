@@ -9,7 +9,7 @@ $(document).ready(function() {
     $('#location').val("");
 
     let request = new XMLHttpRequest();
-    const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=25780aa43a22fdf09ac145172cb3fdb7`;
+    const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&appid=${process.env.API_KEY}`;
 
     request.onreadystatechange = function() {
       if (this.readyState === 4 && this.status === 200) {
@@ -24,6 +24,29 @@ $(document).ready(function() {
    function getElements(response) {
       $('.showHumidity').text(`The humidity in ${city} is ${response.main.humidity}%`);
       $('.showTemp').text(`The temperature in Kelvins is ${response.main.temp} degrees.`);
+    }
+  });
+
+  $('#joke').click(function() {
+    // const city = $('#location').val();
+    // $('#location').val("");
+
+    let request = new XMLHttpRequest();
+    const url = `https://api.chucknorris.io/jokes/random`;
+
+    request.onreadystatechange = function() {
+      if (this.readyState === 4 && this.status === 200) {
+        const response = JSON.parse(this.responseText);
+        getElements(response);
+      }
+    };
+
+    request.open("GET", url, true);
+    request.send();
+
+   function getElements(response) {
+      $('.showJoke').text(`Joke: ${response.value}`);
+      
     }
   });
 });
