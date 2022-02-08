@@ -2,55 +2,48 @@ import $ from 'jquery';
 import 'bootstrap';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import './css/styles.css';
+import WeatherService from './weather-service.js';
+
+function clearFields() {
+  $('#location').val("");
+  $("input:radio[name=temp]:checked").val("");
+  $('.showErrors').text("");
+  $('.showHumidity').text("");
+  $('.showF').text("");
+  $('.showClouds').text("");
+  $('.showWeather').text("");
+  $('#showWind').text("");
+  $('#showSpeed').text("");
+}
+
+function getElements(response, unit) {
+  if (response.main) {
+    $('.showHumidity').text(`The humidity in ${response.name} is ${response.main.humidity}%`);
+    $('.showClouds').text(`The cloudiness in ${response.name} is ${response.clouds.all}%`);
+      if(unit === "imperial") {
+        $('.showF').text(`The temperature in ${response.name} in Fahrenheit is ${response.main.temp}`);
+      } else {
+        $('.showF').text(`The temperature in ${response.name} in Kelvins is ${response.main.temp}`);
+      }  
+    $('.showWeather').text(`The weather in ${response.name} is ${response.weather[0].main}`);
+    $("#showWind").text(`The wind in ${response.name} is ${response.wind.deg}`);
+    $("#showSpeed").text(`The wind speed in ${response.name} is ${response.wind.speed}`);
+  } else {
+    $('.showErrors').text(`There was an error: ${response.message}`);
+  }
+}
+
+async function makeApiCall(city, unit) {
+  const response = await WeatherService.getWeather(city, unit);
+  getElements(response, unit);
+}
 
 $(document).ready(function() {
   $('#weatherLocation').click(function() {
-    const city = $('#location').val();
+    let city = $('#location').val();
     let unit = $("input:radio[name=temp]:checked").val();
-    // console.log(unit);
     $('#location').val("");
-
-    let request = new XMLHttpRequest();
-    const url = `http://api.openweathermap.org/data/2.5/weather?q=${city}&units=${unit}&appid=${process.env.API_KEY}`;
-
-    request.onreadystatechange = function() {
-      if (this.readyState === 4 && this.status === 200) {
-        const response = JSON.parse(this.responseText);
-        getElements(response);
-      }
-    };
-
-    request.open("GET", url, true);
-    request.send();
-
-    function getElements(response) {
-      $('.showHumidity').text(`The humidity in ${city} is ${response.main.humidity}%`);
-      $('.showClouds').text(`The cloudiness in ${city} is ${response.clouds.all}%`);
-      $('.showF').text(`The temperature in ${city} in ${unit} is ${response.main.temp}`);
-      $('.showWeather').text(`The weather in ${city} is ${response.weather[0].main}`);
-      $("#showWind").text(`The wind in ${city} is ${response.wind.deg}`);
-      $("#showSpeed").text(`The wind in ${city} is ${response.wind.speed}`);
-    }
-  });
-
-  $('#joke').click(function() {
-
-    let request = new XMLHttpRequest();
-    const url = `https://api.chucknorris.io/jokes/random`;
-
-    request.onreadystatechange = function() {
-      if (this.readyState === 4 && this.status === 200) {
-        const response = JSON.parse(this.responseText);
-        getElements(response);
-      }
-    };
-
-    request.open("GET", url, true);
-    request.send();
-
-    function getElements(response) {
-      $('.showJoke').text(`Joke: ${response.value}`);
-      
-    }
+    clearFields();
+    makeApiCall(city, unit);
   });
 });
